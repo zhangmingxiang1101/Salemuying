@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('收银台')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-3" style="margin-top:10px">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					今日客流量
+				</div>
+				<div class="panel-body">
+					<label>客流量：<h3 id="passengerFlow"></h3></label>
+				</div>
+
+			</div>
+		</div>
+		<div class="col-sm-3" style="margin-top:10px">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					今日售出
+				</div>
+				<div class="panel-body">
+					<label>售出单数：<h3 id="transactionOrders"></h3></label>
+				</div>
+
+			</div>
+		</div>
+		<div class="col-sm-3" style="margin-top:10px">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					售出商品
+				</div>
+				<div class="panel-body">
+					<label>商品数量：<h3 id="goodsSold"></h3></label>
+				</div>
+
+			</div>
+		</div>
+		<div class="col-sm-3" style="margin-top:10px">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					今日销售额
+				</div>
+				<div class="panel-body">
+					<label>销售额：<h3 id="turnover"></h3></label>
+				</div>
+
+			</div>
+		</div>
+		<div class="row" id="cart">
+
+		</div>
+
+		<div class="col-sm-12 select-table table-striped hidden">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var prefix = ctx + "system/cashier/salesStatistics";
+	var cartIndex = 0;
+	$.operate.submitNoTable(prefix,'post','json',{'param' : null},successAlert);
+	function successAlert(result){
+		let data = result.data;
+		$("#goodsSold").text(data.goodsSold);
+		$("#passengerFlow").text(data.passengerFlow);
+		$("#transactionOrders").text(data.transactionOrders);
+		$("#turnover").text(data.turnover);
+
+	}
+
+	// $(function() {
+	// 	var options = {
+	// 		updateUrlNoTable: prefix + "/into/{id}",
+	// 	};
+	// 	$.table.initOptions(options);
+	// });
+</script>
+</body>
+</html>

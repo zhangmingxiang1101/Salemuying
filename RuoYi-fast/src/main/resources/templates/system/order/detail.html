@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('订单详细')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-user-edit">
+            <div class="form-group" th:each="detail : ${orderDetails}">
+                <label class="col-sm-offset-1 col-sm-3 control-label" th:text="${detail.goodName}+'('+${detail.prices}+'元)'"></label>
+                <label class=" col-sm-1 control-label">×</label>
+                <label class=" col-sm-2 control-label" th:text="${detail.numberOf}"></label>
+                <label class=" col-sm-3 control-label" th:text="'合计:'+${detail.numberOf} * ${detail.prices}+'元'"></label>
+            </div>
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/order";
+        $("#form-order-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-order-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

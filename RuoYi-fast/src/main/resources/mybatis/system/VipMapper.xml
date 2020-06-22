@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.vip.mapper.VipMapper">
+    
+    <resultMap type="Vip" id="VipResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="tel"    column="tel"    />
+        <result property="balance"    column="balance"    />
+        <result property="points"    column="points"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectVipVo">
+        select id, name, tel, balance, points, create_time, status from sys_vip
+    </sql>
+
+
+
+    <select id="selectVipList" parameterType="Vip" resultMap="VipResult">
+        <include refid="selectVipVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
+
+        </where>
+    </select>
+    
+    <select id="selectVipById" parameterType="Long" resultMap="VipResult">
+        <include refid="selectVipVo"/>
+        where id = #{id}
+    </select>
+
+
+        
+    <insert id="insertVip" parameterType="Vip" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_vip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="tel != null  and tel != ''">tel,</if>
+            <if test="balance != null ">balance,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="status != null  and status != ''">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="tel != null  and tel != ''">#{tel},</if>
+            <if test="balance != null ">#{balance},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVip" parameterType="Vip">
+        update sys_vip
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="tel != null  and tel != ''">tel = #{tel},</if>
+            <if test="balance != null ">balance = #{balance},</if>
+            <if test="points != null ">points = #{points},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteVipById" parameterType="Long">
+        update sys_vip set status = 2 where id = #{id}
+    </update>
+
+    <update id="deleteVipByIds" parameterType="String">
+        update sys_vip set status = 2  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="unlockVipById" parameterType="Long">
+        update sys_vip set status = 0 where id = #{id}
+    </update>
+
+    <update id="unlockVipByIds" parameterType="String">
+        update sys_vip set status = 0  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.good.mapper.GoodMapper">
+    
+    <resultMap type="Good" id="GoodResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="barCode"    column="bar_code"    />
+        <result property="prices"    column="prices"    />
+        <result property="stock"    column="stock"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="stauts"    column="stauts"    />
+    </resultMap>
+
+    <sql id="selectGoodVo">
+        select id, name, bar_code, prices, stock, remarks, create_by, create_time, update_by, update_time, stauts from sys_good
+    </sql>
+
+    <select id="selectGoodIdByBarCode" parameterType="String" resultType="Long">
+        select id from sys_good
+        <where>
+            and bar_code = #{barCode}
+        </where>
+    </select>
+
+    <select id="selectGoodByBarCode" parameterType="String" resultMap="GoodResult">
+        <include refid="selectGoodVo"/>
+        <where>
+            and bar_code = #{barCode}
+        </where>
+    </select>
+
+    <select id="selectGoodList" parameterType="Good" resultMap="GoodResult">
+        <include refid="selectGoodVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="barCode != null  and barCode != ''"> and bar_code = #{barCode}</if>
+            <if test="stauts != null  and stauts != ''"> and stauts = #{stauts}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectGoodById" parameterType="Long" resultMap="GoodResult">
+        <include refid="selectGoodVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGood" parameterType="Good" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_good
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="barCode != null  and barCode != ''">bar_code,</if>
+            <if test="prices != null ">prices,</if>
+            <if test="stock != null ">stock,</if>
+            <if test="remarks != null ">remarks,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="stauts != null  and stauts != ''">stauts,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="barCode != null  and barCode != ''">#{barCode},</if>
+            <if test="prices != null ">#{prices},</if>
+            <if test="stock != null ">#{stock},</if>
+            <if test="remarks != null ">#{remarks},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="stauts != null  and stauts != ''">#{stauts},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGood" parameterType="Good">
+        update sys_good
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="barCode != null  and barCode != ''">bar_code = #{barCode},</if>
+            <if test="prices != null ">prices = #{prices},</if>
+            <if test="stock != null ">stock = #{stock},</if>
+            <if test="remarks != null ">remarks = #{remarks},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="stauts != null  and stauts != ''">stauts = #{stauts},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoodById" parameterType="Long">
+        delete from sys_good where id = #{id}
+    </delete>
+
+    <delete id="deleteGoodByIds" parameterType="String">
+        delete from sys_good where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

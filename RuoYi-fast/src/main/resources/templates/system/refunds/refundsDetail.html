@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('订单详细')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <div class="col-sm-12 select-table table-striped">
+        <table id="bootstrap-table"></table>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    let tableData = [[${orderDetails}]];
+    let prefix = ctx + "system/refunds";
+    function refunds(id,orderId){
+        let url = prefix+"/refundsSection"
+        $.operate.submitNoTable(url, "post", "json", {id : id, orderId : orderId}, successFuc);
+    }
+
+    function successFuc(result){
+        var parent = window.parent;
+        $.modal.close();
+        parent.$.modal.msgSuccess("退货成功");
+        parent.$.table.refresh();
+    }
+    $(function() {
+        var options = {
+            data: tableData,
+            pagination: false,
+            showColumns: false,
+            showToggle: false,
+            showRefresh: false,
+            showSearch:false,
+            modalName: "退货平台",
+            columns: [
+                {
+                    field: 'id',
+                    title: '商品ID',
+                    visible: false
+                },
+                {
+                    field: 'goodName',
+                    title: '名称'
+                },
+                {
+                    field: 'prices',
+                    title: '单价'
+                },
+                {
+                    field: 'numberOf',
+                    title: '数量'
+                },
+                {
+                    field: '',
+                    title: '总计',
+                    formatter: function(value, row, index){
+                        let amount = row.numberOf * row.prices
+                        return amount;
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="refunds(\'' + row.id + '\',\'' + row.orderId + '\')"><i class="fa fa-remove"></i>退货</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.order.mapper.OrderDetailMapper">
+
+    <resultMap type="OrderDetail" id="OrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="commodityId"    column="commodity_id"    />
+        <result property="numberOf"    column="number_of"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectOrderDetailVo">
+        select id, order_id, commodity_id, number_of, status from sys_order_detail
+    </sql>
+
+    <select id="selectOrderDetailList" parameterType="OrderDetail" resultMap="OrderDetailResult">
+        <include refid="selectOrderDetailVo"/>
+        <where>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="commodityId != null "> and commodity_id = #{commodityId}</if>
+            <if test="numberOf != null "> and number_of = #{numberOf}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectOrderDetailById" parameterType="Long" resultMap="OrderDetailResult">
+        <include refid="selectOrderDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertOrderDetail" parameterType="OrderDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null ">order_id,</if>
+            <if test="commodityId != null ">commodity_id,</if>
+            <if test="numberOf != null ">number_of,</if>
+            <if test="status != null  and status != ''">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null ">#{orderId},</if>
+            <if test="commodityId != null ">#{commodityId},</if>
+            <if test="numberOf != null ">#{numberOf},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOrderDetail" parameterType="OrderDetail">
+        update sys_order_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null ">order_id = #{orderId},</if>
+            <if test="commodityId != null ">commodity_id = #{commodityId},</if>
+            <if test="numberOf != null ">number_of = #{numberOf},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="updateBy != null ">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteOrderDetailById" parameterType="Long">
+        update sys_order_detail status = 1 where id = #{id}
+    </update>
+
+    <update id="deleteOrderDetailByIds" parameterType="String">
+        update  sys_order_detail status = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="refundsManage" resultType="OrderDetail">
+        select t1.id as id, t1.order_id as orderId, t2.name as goodName, t2.prices as prices, t1.number_of as numberOf, t1.update_time as updateTime from sys_order_detail t1 left join sys_good t2 on t1.commodity_id = t2.id where  t1.status = 1
+    </select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.cashier.mapper.CashierMapper">
+    
+    <select id="selectGoods" resultType="Good" parameterType="Good">
+        select id, name,bar_code as barCode, prices, stock from sys_good
+        <where>
+            and stauts = 0
+            and stock &gt; 0
+            <if test="name != null and name != ''">and `name` like concat('%', #{name}, '%') </if>
+            <if test="barCode != null and barCode != ''">and bar_code = #{barCode} </if>
+        </where>
+    </select>
+
+    <select id="selectVipByTel" resultType="Map" parameterType="String">
+        select id as id, name as name, balance as balance from sys_vip
+        <where>
+            and status = 0
+            and tel = #{tel}
+        </where>
+    </select>
+
+    <select id="selectVipById" resultType="Map" parameterType="Long">
+        select id as id, name as name, balance as balance from sys_vip
+        <where>
+            and status = 0
+            and id = #{vipId}
+        </where>
+    </select>
+
+    <select id="selectPassengerFlow" resultType="Integer">
+        select count(*)*1.75 from sys_order where TO_DAYS(create_time) = TO_DAYS(now())
+    </select>
+
+    <select id="selectTransactionOrders" resultType="Integer">
+        select count(*) from sys_order where TO_DAYS(create_time) = TO_DAYS(now())
+    </select>
+
+    <select id="selectTurnover" resultType="Double">
+        select sum(amount) from sys_order where TO_DAYS(create_time) = TO_DAYS(now())
+    </select>
+
+    <select id="selectGoodsSold" resultType="Integer">
+        select sum(number_of) from sys_order t1 left join sys_order_detail t2 on t1.id = t2.order_id where TO_DAYS(t1.create_time) = TO_DAYS(now())
+    </select>
+
+
+</mapper>

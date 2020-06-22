@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.record.mapper.DamageRecordMapper">
+    
+    <resultMap type="DamageRecord" id="DamageRecordResult">
+        <result property="id"    column="id"    />
+        <result property="commodityId"    column="commodity_id"    />
+        <result property="damageCnt"    column="damage_cnt"    />
+        <result property="category"    column="category"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectDamageRecordVo">
+        select id, commodity_id, damage_cnt, category, create_by, create_time, update_by, update_time, status from sys_damage_record
+    </sql>
+
+    <sql id="selectDamageRecordVos">
+        select t1.id, t2.name, t2.bar_code as barCode, t1.damage_cnt as damageCnt, t1.category, t1.create_by as createBy, t1.create_time as createTime, t1.update_by as updateBy, t1.update_time as updateTime, t1.status from sys_damage_record t1 left join sys_good t2 on t1.commodity_id = t2.id
+    </sql>
+
+    <select id="selectDamageRecordList" parameterType="DamageRecord" resultType="DamageRecord">
+        <include refid="selectDamageRecordVos"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectDamageRecordById" parameterType="Long" resultMap="DamageRecordResult">
+        <include refid="selectDamageRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDamageRecord" parameterType="DamageRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_damage_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commodityId != null ">commodity_id,</if>
+            <if test="damageCnt != null ">damage_cnt,</if>
+            <if test="category != null  and category != ''">category,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="status != null  and status != ''">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commodityId != null ">#{commodityId},</if>
+            <if test="damageCnt != null ">#{damageCnt},</if>
+            <if test="category != null  and category != ''">#{category},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDamageRecord" parameterType="DamageRecord">
+        update sys_damage_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="commodityId != null ">commodity_id = #{commodityId},</if>
+            <if test="damageCnt != null ">damage_cnt = #{damageCnt},</if>
+            <if test="category != null  and category != ''">category = #{category},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDamageRecordById" parameterType="Long">
+        delete from sys_damage_record where id = #{id}
+    </delete>
+
+    <delete id="deleteDamageRecordByIds" parameterType="String">
+        delete from sys_damage_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectDamageRecordByGoodId" parameterType="Long" resultMap="DamageRecordResult">
+        <include refid="selectDamageRecordVo"/>
+        <where>
+            commodity_id = #{goodId}
+        </where>
+    </select>
+
+    <select id="selectDamageRecordByRecId" resultType="DamageRecord" parameterType="Long">
+        <include refid="selectDamageRecordVos"/>
+        <where>
+            and t1.id = #{id}
+        </where>
+    </select>
+</mapper>
